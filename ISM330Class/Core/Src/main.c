@@ -75,7 +75,7 @@ static void MX_SPI5_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USB_OTG_HS_HCD_Init(void);
-static void MX_SPI4_Init(void);
+void MX_SPI4_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -388,7 +388,7 @@ static void MX_LTDC_Init(void)
   * @param None
   * @retval None
   */
-static void MX_SPI4_Init(void)
+void MX_SPI4_Init(void)
 {
 
   /* USER CODE BEGIN SPI4_Init 0 */

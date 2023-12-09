@@ -27,7 +27,7 @@ typedef enum
 class SPIClass {
 public:
 	SPIClass();
-	SPIClass(SPI_HandleTypeDef spi);
+	SPIClass(SPI_HandleTypeDef& spi);
 	virtual ~SPIClass();
 
 
