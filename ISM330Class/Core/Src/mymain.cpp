@@ -4,6 +4,9 @@
  *  Created on: 30 nov. 2023
  *      Author: Tarik
  */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "main.h"
 #include "stm32f4xx_hal_gpio.h"
@@ -12,15 +15,25 @@
 #include "../../BSP/SPIClass.h"
 #include <cstdio>
 #include <cmath>
+/************ external objet and external for C++ execution in C*/
 extern SPI_HandleTypeDef hspi4;
 extern "C" void mymain(void);
 extern "C" void AccGyro_call_back_function(void);
+/****************************************************************/
 
+#define INTEGRATION  100e-3
+#define SENSOR_ODR 104.0f // In Hertz
+#define ACC_FS 2 // In g
+#define GYR_FS 2000 // In dps
+#define MEASUREMENT_TIME_INTERVAL (1000.0f/SENSOR_ODR) // In ms
+#define FIFO_SAMPLE_THRESHOLD 199
+#define FLASH_BUFF_LEN 8192
 
+/*************** Satic function *********************************/
 static void rungeKutta(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
 static void integrate(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
 static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float * Output);
-
+/****************************************************************/
 
 int32_t accelerometer[3];
 int32_t gyroscope[3];
@@ -30,13 +43,7 @@ float velocity2;
 float  angle[3];
 float  tauxRotation;
 
-#define INTEGRATION  100e-3
-#define SENSOR_ODR 104.0f // In Hertz
-#define ACC_FS 2 // In g
-#define GYR_FS 2000 // In dps
-#define MEASUREMENT_TIME_INTERVAL (1000.0f/SENSOR_ODR) // In ms
-#define FIFO_SAMPLE_THRESHOLD 199
-#define FLASH_BUFF_LEN 8192
+
 void mymain(void)
 {
 
@@ -198,3 +205,7 @@ void AccGyro_call_back_function(void)
 {
 
 }
+
+#ifdef __cplusplus
+}
+#endif
