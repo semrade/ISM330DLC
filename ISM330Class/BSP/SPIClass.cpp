@@ -10,31 +10,35 @@
 #include "stm32f4xx_hal.h"
 #include "main.h"
 
-extern SPI_HandleTypeDef hspi4;
+extern SPI_HandleTypeDef spi;
 SPIClass::SPIClass() {
 
 
 }
-SPIClass::SPIClass(SPI_HandleTypeDef &spi)
+SPIClass::SPIClass(SPI_HandleTypeDef spi)
 {
 
-	if (/*spi == NULL*/1 == 1) {
-		hspi4.Instance = SPI4;
-		hspi4.Init.Mode = SPI_MODE_MASTER;
-		hspi4.Init.Direction = SPI_DIRECTION_2LINES;
-		hspi4.Init.DataSize = SPI_DATASIZE_8BIT;
-		hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
-		hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
-		hspi4.Init.NSS = SPI_NSS_SOFT;
-		hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
-		hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
-		hspi4.Init.TIMode = SPI_TIMODE_DISABLE;
-		hspi4.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-		hspi4.Init.CRCPolynomial = 10;
-		if (HAL_SPI_Init(&hspi4) != HAL_OK) {
+	if (spi == NULL) 
+	{
+		spi.Instance = SPI4;
+		spi.Init.Mode = SPI_MODE_MASTER;
+		spi.Init.Direction = SPI_DIRECTION_2LINES;
+		spi.Init.DataSize = SPI_DATASIZE_8BIT;
+		spi.Init.CLKPolarity = SPI_POLARITY_LOW;
+		spi.Init.CLKPhase = SPI_PHASE_1EDGE;
+		spi.Init.NSS = SPI_NSS_SOFT;
+		spi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+		spi.Init.FirstBit = SPI_FIRSTBIT_MSB;
+		spi.Init.TIMode = SPI_TIMODE_DISABLE;
+		spi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+		spi.Init.CRCPolynomial = 10;
+
+		if (HAL_SPI_Init(&spi) != HAL_OK) 
+		{
 			Error_Handler();
 		}
-		spi_device = hspi4;
+		// if init is okay affect to the objet
+		spi_device = spi;
 	}
 
 
