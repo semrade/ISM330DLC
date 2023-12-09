@@ -16,8 +16,8 @@ extern "C" {
 void mymain(void);
 
 typedef void (*functionPointer)(void);
-void AccGyro_call_back_function(void);
-functionPointer GyroAccelCalctable[1] = {AccGyro_call_back_function};
+void Ism330dlc_CallBackFunction(void);
+functionPointer GyroAccelCalctable[1] = {Ism330dlc_CallBackFunction};
 
 #ifdef __cplusplus
 }

@@ -128,7 +128,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   /* start timer 1*/
-  mymain();
+  Ims330dlc_InitObjet();
   
   /* start interrupt for timer */
   if(HAL_OK != HAL_TIM_Base_Start_IT(&htim3))

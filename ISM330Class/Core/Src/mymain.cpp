@@ -1,5 +1,5 @@
 /*
- * mymain.cpp
+ * Ims330dlc_InitObjet.cpp
  *
  *  Created on: 30 nov. 2023
  *      Author: Tarik
@@ -17,8 +17,8 @@ extern "C" {
 #include <cmath>
 /************ external objet and external for C++ execution in C*/
 extern SPI_HandleTypeDef hspi4;
-extern "C" void mymain(void);
-extern "C" void AccGyro_call_back_function(void);
+extern "C" void Ims330dlc_InitObjet(void);
+extern "C" void Ism330dlc_CallBackFunction(void);
 /****************************************************************/
 
 #define INTEGRATION  100e-3
@@ -50,7 +50,7 @@ ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
   * @param None
   * @retval None
   */
-void mymain(void)
+void Ims330dlc_InitObjet(void)
 {
 
 	HAL_StatusTypeDef STATUS;
@@ -180,7 +180,7 @@ static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float
   * @param None
   * @retval None
   */
-void AccGyro_call_back_function(void)
+void Ism330dlc_CallBackFunction(void)
 {
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
