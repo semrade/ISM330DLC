@@ -42,7 +42,7 @@ float velocity1[3];
 float velocity2;
 float  angle[3];
 float  tauxRotation;
-/*****objects */
+/*****objects ******/
 
 void mymain(void)
 {
