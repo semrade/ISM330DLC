@@ -43,14 +43,14 @@ float velocity2;
 float  angle[3];
 float  tauxRotation;
 /*****objects */
+
+void mymain(void)
+{
+
 	HAL_StatusTypeDef STATUS;
 	ISM330DLCStatusTypeDef STATUS1;
 	SPIClass dev_interface(hspi4);
 	ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
-void mymain(void)
-{
-
-
 
 	uint8_t transerfer = 0xA5;
 	uint8_t pRxDATA;
