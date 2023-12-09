@@ -51,11 +51,10 @@ void mymain(void)
 
 	HAL_StatusTypeDef STATUS;
 	ISM330DLCStatusTypeDef STATUS1;
-
-
 	uint8_t transerfer = 0xA5;
 	uint8_t pRxDATA;
-	//hardware test
+
+	//hardware spi4 test
 	for (uint16_t indexer = 0; indexer < 100; indexer++)
 	{
 		HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
@@ -108,54 +107,13 @@ void mymain(void)
     AccGyr.Get_G_FS(&fullScale);
     AccGyr.Get_X_FS(&fullScale);
 
-
 	/* Object construction */
 	while (1)
 	{
-		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-		HAL_Delay(100);
-
-		/*Get accelerometer and gyroscope data in [mg] and [mdps]*/
-		AccGyr.Get_X_Axes(accelerometer);
-		AccGyr.Get_G_Axes(gyroscope);
-
-		if(accelerometer)
-		{
-			/* Integration methods */
-			rungeKutta(accelerometer, 0, INTEGRATION, velocity);
-			integrate(accelerometer, 0, INTEGRATION, velocity1);
-		}
-
-		/* Convert m/s to km/h */
-		for (uint8_t i = 0; i<3 ; i++)
-		{
-			velocity[i] = velocity[i];
-			velocity1[i] = velocity1[i];
-		}
-
-		for(uint8_t i=0; i<3 ; i++)
-		{
-			//printf(" Runge-Kutta velocity integration: %.3f mm/s, normal integration velocity1: %.3f mm/s for %d \n", velocity[i], velocity1[i], i);
-		}
-
-
-		// Integration de l'angle en utilisant la méthode de Runge-Kutta
-		// integrer si la variation est importante
-		if (abs(gyroscope[0]) > 1000 && abs(gyroscope[1]) > 1000 && abs(gyroscope[2]) > 1000 )
-		{
-			rungeKuttaIntegration(gyroscope, INTEGRATION, angle);
-		}
-
-		for(uint16_t i=0; i<3 ; i++)
-		{
-			//printing the angle on the console swv itm data
-			printf("L'angle integre avec Runge-Kutta est de : %.3f mdegres indice %d\n",angle[i], i);
-		}
+		
 	}
 
 }
-
-
 
 // Runge-Kutta integration method
 static void rungeKutta(int32_t * acceleration, float initialVelocity, float timeStep, float * integral) {
@@ -204,7 +162,44 @@ static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float
 
 void AccGyro_call_back_function(void)
 {
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
+	/*Get accelerometer and gyroscope data in [mg] and [mdps]*/
+	AccGyr.Get_X_Axes(accelerometer);
+	AccGyr.Get_G_Axes(gyroscope);
+
+	if(accelerometer)
+	{
+		/* Integration methods */
+		rungeKutta(accelerometer, 0, INTEGRATION, velocity);
+		integrate(accelerometer, 0, INTEGRATION, velocity1);
+	}
+
+	/* Convert m/s to km/h */
+	for (uint8_t i = 0; i<3 ; i++)
+	{
+		velocity[i] = velocity[i];
+		velocity1[i] = velocity1[i];
+	}
+
+	for(uint8_t i=0; i<3 ; i++)
+	{
+		//printf(" Runge-Kutta velocity integration: %.3f mm/s, normal integration velocity1: %.3f mm/s for %d \n", velocity[i], velocity1[i], i);
+	}
+
+
+	// Integration de l'angle en utilisant la méthode de Runge-Kutta
+	// integrer si la variation est importante
+	if (abs(gyroscope[0]) > 1000 && abs(gyroscope[1]) > 1000 && abs(gyroscope[2]) > 1000 )
+	{
+		rungeKuttaIntegration(gyroscope, INTEGRATION, angle);
+	}
+
+	for(uint16_t i=0; i<3 ; i++)
+	{
+		//printing the angle on the console swv itm data
+		//printf("L'angle integre avec Runge-Kutta est de : %.3f mdegres indice %d\n",angle[i], i);
+	}
 }
 
 #ifdef __cplusplus

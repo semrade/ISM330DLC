@@ -127,18 +127,14 @@ int main(void)
   MX_SPI4_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  /*start timer 1*/
-
-  if(/*HAL_OK == HAL_TIM_Base_Start_IT(&htim3)*/1==1)
-  {
-	  mymain();
-  }
-  else
+  /* start timer 1*/
+  mymain();
+  
+  /* start interrupt for timer */
+  if(HAL_OK != HAL_TIM_Base_Start_IT(&htim3))
   {
 	  Error_Handler();
   }
-
-
 
   /* USER CODE END 2 */
 
@@ -146,7 +142,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
