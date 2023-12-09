@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 
-void mymain(void);
+void Ims330dlc_InitObjet(void);
 
 typedef void (*functionPointer)(void);
 void Ism330dlc_CallBackFunction(void);
