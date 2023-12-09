@@ -45,7 +45,11 @@ float  tauxRotation;
 /*****objects ******/
 SPIClass dev_interface(hspi4);
 ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void mymain(void)
 {
 
@@ -114,7 +118,11 @@ void mymain(void)
 	}
 
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 // Runge-Kutta integration method
 static void rungeKutta(int32_t * acceleration, float initialVelocity, float timeStep, float * integral) {
 
@@ -134,13 +142,21 @@ static void rungeKutta(int32_t * acceleration, float initialVelocity, float time
 	}
 
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 static void integrate(int32_t* acceleration, float initialVelocity, float timeStep, float * integral) {
     integral[0] = initialVelocity + (acceleration[0] * timeStep);
     integral[1] = initialVelocity + (acceleration[1] * timeStep);
     integral[2] = initialVelocity + (acceleration[2] * timeStep);
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 // Méthode de Runge-Kutta d'ordre 4 pour l'intégration numérique
 static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float * Output) {
     float k1 = 0.0;
@@ -159,7 +175,11 @@ static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float
 
 }
 
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void AccGyro_call_back_function(void)
 {
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
