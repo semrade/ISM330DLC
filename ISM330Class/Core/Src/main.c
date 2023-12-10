@@ -61,7 +61,7 @@ SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
 
-int16_t perfome10msOperations (uint16_t value, functionPointer *GyroAccelCalc);
+int16_t perfome10msOperations (functionPointer *GyroAccelCalc);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -568,7 +568,7 @@ static void MX_TIM13_Init(void)
   htim13.Instance = TIM13;
   htim13.Init.Prescaler = 45-1;
   htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim13.Init.Period = 1000-1;
+  htim13.Init.Period = 10000-1;
   htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
@@ -803,10 +803,17 @@ int _write(int file, char *ptr, int len)
   return len;
 }
 
-int16_t perfome10msOperations (uint16_t value, functionPointer *GyroAccelCalc)
+int16_t perfome10msOperations (functionPointer *GyroAccelCalc)
 {
 	uint16_t var;
-	for (var = 0; var < value; ++var) {
+	uint16_t size;
+
+	/* calculate the buffer size*/
+	size = sizeof((void *)GyroAccelCalc)/sizeof(GyroAccelCalc[0]);
+
+	/* call all the 10 ms function for be executed */
+	for (var = 0; var < size; ++var)
+	{
 		GyroAccelCalc[var]();
 	}
 	return 0;
@@ -833,8 +840,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
   if(htim->Instance == TIM13)
   {
-	  //Call back function here
-	  retValue = perfome10msOperations(1,GyroAccelCalctable);
+	  /* Call back function with 10ms */
+	  retValue = perfome10msOperations(GyroAccelCalctable);
   }
 
   /* USER CODE END Callback 1 */

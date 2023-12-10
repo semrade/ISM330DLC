@@ -15,6 +15,7 @@ extern "C" {
 #include "../../BSP/SPIClass.h"
 #include <cstdio>
 #include <cmath>
+
 /************ external objet and external for C++ execution in C*/
 extern SPI_HandleTypeDef hspi4;
 extern "C" void Ims330dlc_InitObjet(void);
@@ -191,7 +192,7 @@ void Ism330dlc_CallBackFunction(void)
 		integrate(accelerometer, 0, INTEGRATION, velocity1);
 	}
 
-	/* Convert m/s to km/h */
+	/* Convert mm/s to km/h */
 	for (uint8_t i = 0; i<3 ; i++)
 	{
 		velocity[i] = velocity[i];

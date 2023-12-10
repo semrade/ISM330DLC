@@ -11,10 +11,21 @@
 #include "main.h"
 
 extern SPI_HandleTypeDef spi;
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 SPIClass::SPIClass() {
 
 
 }
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 SPIClass::SPIClass(SPI_HandleTypeDef spi)
 {
 
@@ -37,24 +48,43 @@ SPIClass::SPIClass(SPI_HandleTypeDef spi)
 		{
 			Error_Handler();
 		}
-		// if init is okay affect to the objet
+		// if init is okay affect to the object
 		spi_device = spi;
 	}
 
 
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 SPIClass::~SPIClass() {
 
 }
+/**
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
 void SPIClass::begin()
 {
 
 }
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void SPIClass::pinMode(uint16_t pin, PinDirectionDefinition OUTPUT)
 {
 
 }
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void SPIClass::digitalWrite(uint16_t cs_pin, PinLevel pin_Level)
 {
 	GPIO_PinState value;
@@ -70,11 +100,20 @@ void SPIClass::digitalWrite(uint16_t cs_pin, PinLevel pin_Level)
 
 	HAL_GPIO_WritePin(GPIOE, cs_pin, value);
 }
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void SPIClass::beginTransaction()
 {
 
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 uint8_t SPIClass::transfer(uint8_t addresse)
 {
 	uint8_t ReadData = 0;
@@ -90,6 +129,11 @@ uint8_t SPIClass::transfer(uint8_t addresse)
 	}
 	return ReadData;
 }
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void SPIClass::endTransaction()
 {
 
