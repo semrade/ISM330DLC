@@ -51,6 +51,7 @@ SPI_HandleTypeDef hspi5;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim13;
 
 UART_HandleTypeDef huart1;
 
@@ -75,8 +76,9 @@ static void MX_SPI5_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USB_OTG_HS_HCD_Init(void);
-void MX_SPI4_Init(void);
+static void MX_SPI4_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -126,12 +128,13 @@ int main(void)
   MX_USB_OTG_HS_HCD_Init();
   MX_SPI4_Init();
   MX_TIM3_Init();
+  MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
   /* start timer 1*/
   Ims330dlc_InitObjet();
   
   /* start interrupt for timer */
-  if(HAL_OK != HAL_TIM_Base_Start_IT(&htim3))
+  if(HAL_OK != HAL_TIM_Base_Start_IT(&htim13))
   {
 	  Error_Handler();
   }
@@ -383,7 +386,7 @@ static void MX_LTDC_Init(void)
   * @param None
   * @retval None
   */
-void MX_SPI4_Init(void)
+static void MX_SPI4_Init(void)
 {
 
   /* USER CODE BEGIN SPI4_Init 0 */
@@ -544,6 +547,37 @@ static void MX_TIM3_Init(void)
 
 
   /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * @brief TIM13 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM13_Init(void)
+{
+
+  /* USER CODE BEGIN TIM13_Init 0 */
+
+  /* USER CODE END TIM13_Init 0 */
+
+  /* USER CODE BEGIN TIM13_Init 1 */
+
+  /* USER CODE END TIM13_Init 1 */
+  htim13.Instance = TIM13;
+  htim13.Init.Prescaler = 45-1;
+  htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim13.Init.Period = 1000-1;
+  htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM13_Init 2 */
+
+  /* USER CODE END TIM13_Init 2 */
 
 }
 
@@ -797,7 +831,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  if(htim->Instance == TIM3)
+  if(htim->Instance == TIM13)
   {
 	  //Call back function here
 	  retValue = perfome10msOperations(1,GyroAccelCalctable);

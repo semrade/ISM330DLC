@@ -18,7 +18,7 @@ SPIClass::SPIClass() {
 SPIClass::SPIClass(SPI_HandleTypeDef spi)
 {
 
-	if (spi == NULL) 
+	if (spi.Instance == NULL)
 	{
 		spi.Instance = SPI4;
 		spi.Init.Mode = SPI_MODE_MASTER;

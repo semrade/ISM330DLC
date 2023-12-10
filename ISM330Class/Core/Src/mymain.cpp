@@ -112,10 +112,6 @@ void Ims330dlc_InitObjet(void)
     AccGyr.Get_X_FS(&fullScale);
 
 	/* Object construction */
-	while (1)
-	{
-		
-	}
 
 }
 /**
