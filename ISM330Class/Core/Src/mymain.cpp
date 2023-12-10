@@ -22,7 +22,7 @@ extern "C" void Ims330dlc_InitObjet(void);
 extern "C" void Ism330dlc_CallBackFunction(void);
 /****************************************************************/
 
-#define INTEGRATION  100e-3
+#define INTEGRATION  10e-3
 #define SENSOR_ODR 104.0f // In Hertz
 #define ACC_FS 2 // In g
 #define GYR_FS 2000 // In dps
@@ -31,18 +31,21 @@ extern "C" void Ism330dlc_CallBackFunction(void);
 #define FLASH_BUFF_LEN 8192
 
 /*************** Satic function *********************************/
-static void rungeKutta(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
+//4 order runge kutta integration 
+static void Runge_Kutta_Integration(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
+
+//Euler integration with 1 order
 static void integrate(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
-static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float * Output);
 /****************************************************************/
 
 int32_t accelerometer[3];
 int32_t gyroscope[3];
 float velocity[3];
-float velocity1[3];
+float Speed2AfterIngeration[3];
 float velocity2;
-float  angle[3];
+float  AngleAfterIngeration[3];
 float  tauxRotation;
+
 /*****objects ******/
 SPIClass dev_interface(hspi4);
 ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
@@ -116,12 +119,12 @@ void Ims330dlc_InitObjet(void)
 
 }
 /**
-  * @brief GPIO Initialization Function
+  * @brief Runge-Kutta integration method
   * @param None
   * @retval None
   */
-// Runge-Kutta integration method
-static void rungeKutta(int32_t * acceleration, float initialVelocity, float timeStep, float * integral) {
+static void Runge_Kutta_Integration(int32_t * acceleration, float initialVelocity, float timeStep, float * integral) 
+{
 
 	float k1 = 0.0;
 	float k2 = 0.0;
@@ -140,38 +143,16 @@ static void rungeKutta(int32_t * acceleration, float initialVelocity, float time
 
 }
 /**
-  * @brief GPIO Initialization Function
+  * @brief simple integration method 
   * @param None
   * @retval None
   */
-static void integrate(int32_t* acceleration, float initialVelocity, float timeStep, float * integral) {
-    integral[0] = initialVelocity + (acceleration[0] * timeStep);
-    integral[1] = initialVelocity + (acceleration[1] * timeStep);
-    integral[2] = initialVelocity + (acceleration[2] * timeStep);
+static void integrate(int32_t* acceleration, float initialVelocity, float timeStep, float * integral)
+{
+    integral[0] += initialVelocity + (acceleration[0] * timeStep);
+    integral[1] += initialVelocity + (acceleration[1] * timeStep);
+    integral[2] += initialVelocity + (acceleration[2] * timeStep);
 }
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-// Méthode de Runge-Kutta d'ordre 4 pour l'intégration numérique
-static void rungeKuttaIntegration(int32_t * tauxRotation, float deltaTime, float * Output) {
-    float k1 = 0.0;
-    float k2 = 0.0;
-    float k3 = 0.0;
-    float k4 = 0.0;
-
-    for (uint16_t i = 0; i < 3; i++)
-    {
-        k1 = tauxRotation[i];
-        k2 = tauxRotation[i] + 0.5 * k1 * deltaTime;
-        k3 = tauxRotation[i] + 0.5 * k2 * deltaTime;
-        k4 = tauxRotation[i] + k3 * deltaTime;
-        Output [i] += (k1 + 2 * k2 + 2 * k3 + k4) * (deltaTime / 6.0);
-	}
-
-}
-
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -184,39 +165,36 @@ void Ism330dlc_CallBackFunction(void)
 	/*Get accelerometer and gyroscope data in [mg] and [mdps]*/
 	AccGyr.Get_X_Axes(accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
-
+	
+	/**speed ingegration */
 	if(accelerometer)
 	{
 		/* Integration methods */
-		rungeKutta(accelerometer, 0, INTEGRATION, velocity);
-		integrate(accelerometer, 0, INTEGRATION, velocity1);
+		Runge_Kutta_Integration(accelerometer, 0, INTEGRATION, Speed1AfterIngeration);
+
+		/**Normal integration for comparision */
+		integrate(accelerometer, 0, INTEGRATION, Speed2AfterIngeration);
 	}
 
-	/* Convert mm/s to km/h */
+	/* Convert mm/s to m/s */
 	for (uint8_t i = 0; i<3 ; i++)
 	{
-		velocity[i] = velocity[i];
-		velocity1[i] = velocity1[i];
+		Speed1AfterIngeration[i] = Speed1AfterIngeration[i] * 1e-3;
+		Speed2AfterIngeration[i] = Speed2AfterIngeration[i] * 1e-3;
 	}
 
-	for(uint8_t i=0; i<3 ; i++)
-	{
-		//printf(" Runge-Kutta velocity integration: %.3f mm/s, normal integration velocity1: %.3f mm/s for %d \n", velocity[i], velocity1[i], i);
-	}
-
-
-	// Integration de l'angle en utilisant la méthode de Runge-Kutta
-	// integrer si la variation est importante
+	/**limit integration if values are less then certain value */
 	if (abs(gyroscope[0]) > 1000 && abs(gyroscope[1]) > 1000 && abs(gyroscope[2]) > 1000 )
 	{
-		rungeKuttaIntegration(gyroscope, INTEGRATION, angle);
+		Runge_Kutta_Integration(gyroscope, 0 ,INTEGRATION, AngleAfterIngeration);
 	}
 
-	for(uint16_t i=0; i<3 ; i++)
+	/**Convert from mdeg  to deg*/
+	for(uint8_t i = 0; i<3; i++)
 	{
-		//printing the angle on the console swv itm data
-		//printf("L'angle integre avec Runge-Kutta est de : %.3f mdegres indice %d\n",angle[i], i);
+		Runge_Kutta_Integration[i] = Runge_Kutta_Integration[i] * 1e-3;
 	}
+
 }
 
 #ifdef __cplusplus
