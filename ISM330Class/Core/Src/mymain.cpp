@@ -40,10 +40,10 @@ static void integrate(int32_t *acceleration, float initialVelocity, float timeSt
 
 int32_t accelerometer[3];
 int32_t gyroscope[3];
-float velocity[3];
-float Speed2AfterIngeration[3];
+float Speed1AfterIntegration[3];
+float Speed2AfterIntegration[3];
 float velocity2;
-float  AngleAfterIngeration[3];
+float  AngleAfterIntegration[3];
 float  tauxRotation;
 
 /*****objects ******/
@@ -107,7 +107,7 @@ void Ims330dlc_InitObjet(void)
     AccGyr.Get_G_ODR(&odr);
 
     /* set full scale*/
-    AccGyr.Set_G_FS(2000.0);
+    AccGyr.Set_G_FS(500.0);
     AccGyr.Set_X_FS(2);
 
     float fullScale;
@@ -160,41 +160,49 @@ static void integrate(int32_t* acceleration, float initialVelocity, float timeSt
   */
 void Ism330dlc_CallBackFunction(void)
 {
+	/* real time calculation */
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
 	/*Get accelerometer and gyroscope data in [mg] and [mdps]*/
 	AccGyr.Get_X_Axes(accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
 	
-	/**speed ingegration */
+	/**speed integration */
 	if(accelerometer)
 	{
-		/* Integration methods */
-		Runge_Kutta_Integration(accelerometer, 0, INTEGRATION, Speed1AfterIngeration);
+		/*  Integration methods */
+		Runge_Kutta_Integration(accelerometer, 0, INTEGRATION, Speed1AfterIntegration);
 
-		/**Normal integration for comparision */
-		integrate(accelerometer, 0, INTEGRATION, Speed2AfterIngeration);
+		/** Normal integration for comparision */
+		integrate(accelerometer, 0, INTEGRATION, Speed2AfterIntegration);
 	}
 
 	/* Convert mm/s to m/s */
 	for (uint8_t i = 0; i<3 ; i++)
 	{
-		Speed1AfterIngeration[i] = Speed1AfterIngeration[i] * 1e-3;
-		Speed2AfterIngeration[i] = Speed2AfterIngeration[i] * 1e-3;
+		Speed1AfterIntegration[i] = Speed1AfterIntegration[i] /** 1e-3*/;
+		Speed2AfterIntegration[i] = Speed2AfterIntegration[i] /** 1e-3*/;
 	}
 
 	/**limit integration if values are less then certain value */
 	if (abs(gyroscope[0]) > 1000 && abs(gyroscope[1]) > 1000 && abs(gyroscope[2]) > 1000 )
 	{
-		Runge_Kutta_Integration(gyroscope, 0 ,INTEGRATION, AngleAfterIngeration);
+		Runge_Kutta_Integration(gyroscope, 0 ,INTEGRATION, AngleAfterIntegration);
 	}
 
 	/**Convert from mdeg  to deg*/
 	for(uint8_t i = 0; i<3; i++)
 	{
-		Runge_Kutta_Integration[i] = Runge_Kutta_Integration[i] * 1e-3;
+		AngleAfterIntegration[i] = AngleAfterIntegration[i] /** 1e-3*/;
 	}
 
+	/* real time calculation */
+	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+}
+
+void Ism330dlc_kalmanFilter(void)
+{
+	/* Implement kalman filter here*/
 }
 
 #ifdef __cplusplus

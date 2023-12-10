@@ -14,10 +14,13 @@ extern "C" {
 
 
 void Ims330dlc_InitObjet(void);
+void Ism330dlc_kalmanFilter (void);
 
 typedef void (*functionPointer)(void);
 void Ism330dlc_CallBackFunction(void);
-functionPointer GyroAccelCalctable[1] = {Ism330dlc_CallBackFunction};
+functionPointer GyroAccelCalctable[1] = {Ism330dlc_CallBackFunction, 
+                                            Ism330dlc_kalmanFilter
+                                        };
 
 #ifdef __cplusplus
 }

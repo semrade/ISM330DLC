@@ -566,7 +566,7 @@ static void MX_TIM13_Init(void)
 
   /* USER CODE END TIM13_Init 1 */
   htim13.Instance = TIM13;
-  htim13.Init.Prescaler = 45-1;
+  htim13.Init.Prescaler = 90-1;
   htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim13.Init.Period = 10000-1;
   htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -802,7 +802,11 @@ int _write(int file, char *ptr, int len)
   }
   return len;
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 int16_t perfome10msOperations (functionPointer *GyroAccelCalc)
 {
 	uint16_t var;
