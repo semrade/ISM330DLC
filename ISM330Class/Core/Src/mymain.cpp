@@ -115,7 +115,11 @@ void Ims330dlc_InitObjet(void)
     AccGyr.Get_G_FS(&fullScale);
     AccGyr.Get_X_FS(&fullScale);
 
-	/* Object construction */
+	/* Set high performance mode */
+	//AccGyr.WriteReg();
+
+	/* digital filter configuration */
+	
 
 }
 /**
@@ -212,7 +216,7 @@ void Ism330dlc_calibration ()
 
 void Ism330dlc_autoTest()
 {
-	
+
 }
 #ifdef __cplusplus
 }

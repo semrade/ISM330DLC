@@ -22,6 +22,15 @@ functionPointer GyroAccelCalctable[1] = {Ism330dlc_CallBackFunction,
                                             Ism330dlc_kalmanFilter
                                         };
 
+typedef enum
+{
+    Power_Mode,
+    HIGH_PERFORMANCE,
+    NORMAL_MODE,
+    LOW_POWER_MODE,
+    SLEEP_MODE
+}Ism330dlc_mode;
+
 #ifdef __cplusplus
 }
 #endif
