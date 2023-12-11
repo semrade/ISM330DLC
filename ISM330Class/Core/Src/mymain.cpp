@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 #include "main.h"
+#include "mymain.h"
 #include "stm32f4xx_hal_gpio.h"
 
 #include "../../BSP/ISM330DLCSensor.h"
@@ -40,7 +41,7 @@ static void integrate(int32_t *acceleration, float initialVelocity, float timeSt
 void Ism330dlc_calibration (float r_Input[], float r_Offset[] );
 /****************************************************************/
 
-int32_t accelerometer[3];
+int32_t Accelerometer[3];
 int32_t gyroscope[3];
 float Speed1AfterIntegration[3];
 float Speed2AfterIntegration[3];
@@ -49,10 +50,13 @@ float  AngleAfterIntegration[3];
 float  tauxRotation;
 float r_Offset[3];
 float r_Input[3];
+float AccfilteredValue[3];
 
 /*****objects ******/
 SPIClass dev_interface(hspi4);
 ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
+// Initialize the low-pass filter with a cutoff frequency of 10 Hz and a time step of 0.01 seconds
+LowPassFilter myFilter;
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -131,6 +135,7 @@ void Ims330dlc_InitObjet(void)
 
 
 	/* digital filter configuration */
+	initLowPassFilter(&myFilter, 100.0, 0.01);
 	
 
 }
@@ -179,26 +184,32 @@ void Ism330dlc_CallBackFunction(void)
 	/* real time calculation */
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
-	/*Get accelerometer and gyroscope data in [mg] and [mdps]*/
-	AccGyr.Get_X_Axes(accelerometer);
+	/*Get Accelerometer and gyroscope data in [mg] and [mdps]*/
+	AccGyr.Get_X_Axes(Accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
 	
+	/* filter acceleration data befor use */
+	AccfilteredValue[0]  = updateLowPassFilter(&myFilter, Accelerometer[0] );
+	AccfilteredValue[1]  = updateLowPassFilter(&myFilter, Accelerometer[1] );
+	AccfilteredValue[2]  = updateLowPassFilter(&myFilter, Accelerometer[2] );
+
 	/*Calibration*/
 	for(uint8_t index=0; index<3; index++)
 	{
-		r_Input[index]=accelerometer[index];
+		r_Input[index]=Accelerometer[index];
 	}
+
 	/* calculate offset */
 	Ism330dlc_calibration (r_Input,r_Offset);
 
 	/**speed integration */
-	if(accelerometer)
+	if(Accelerometer)
 	{
 		/*  Integration methods */
-		Runge_Kutta_Integration(accelerometer, 0, INTEGRATION, Speed1AfterIntegration);
+		Runge_Kutta_Integration(Accelerometer, 0, INTEGRATION, Speed1AfterIntegration);
 
 		/** Normal integration for comparision */
-		integrate(accelerometer, 0, INTEGRATION, Speed2AfterIntegration);
+		integrate(Accelerometer, 0, INTEGRATION, Speed2AfterIntegration);
 	}
 
 	/* Convert mm/s to m/s */
@@ -244,6 +255,30 @@ void Ism330dlc_calibration (float r_Input[], float r_Offset[] )
 void Ism330dlc_autoTest()
 {
 
+}
+
+
+
+
+// Function to initialize the low-pass filter
+void initLowPassFilter(LowPassFilter* filter, float cutoffFrequency, float dt) 
+{
+    filter->cutoffFrequency = cutoffFrequency;
+    filter->dt = dt;
+    
+    float tau = 1.0 / (2.0 * M_PI * cutoffFrequency);
+    filter->alpha = dt / (dt + tau);
+
+    // Initialize the filtered value based on the initial conditions if needed
+    filter->currentValue = 0.0;  // Adjust as needed
+}
+
+// Function to update the low-pass filter with a new input
+float updateLowPassFilter(LowPassFilter* filter, float inputValue) 
+{
+	//
+    filter->currentValue = filter->alpha * inputValue + (1.0 - filter->alpha) * filter->currentValue;
+    return filter->currentValue;
 }
 #ifdef __cplusplus
 }

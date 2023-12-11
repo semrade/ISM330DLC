@@ -15,6 +15,8 @@ extern "C" {
 
 void Ims330dlc_InitObjet(void);
 void Ism330dlc_kalmanFilter (void);
+void initLowPassFilter(LowPassFilter* filter, float cutoffFrequency, float dt);
+float updateLowPassFilter(LowPassFilter* filter, float inputValue);
 
 typedef void (*functionPointer)(void);
 void Ism330dlc_CallBackFunction(void);
@@ -30,6 +32,15 @@ typedef enum
     LOW_POWER_MODE,
     SLEEP_MODE
 }Ism330dlc_mode;
+
+typedef struct
+{
+    float cutoffFrequency;  // Cutoff frequency in Hz
+    float dt;               // Time step in seconds
+    float alpha;            // Filter coefficient
+    float currentValue;     // Current filtered value
+} LowPassFilter;
+
 
 #ifdef __cplusplus
 }
