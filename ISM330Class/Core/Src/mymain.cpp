@@ -205,6 +205,15 @@ void Ism330dlc_kalmanFilter(void)
 	/* Implement kalman filter here*/
 }
 
+void Ism330dlc_calibration ()
+{
+
+}
+
+void Ism330dlc_autoTest()
+{
+	
+}
 #ifdef __cplusplus
 }
 #endif

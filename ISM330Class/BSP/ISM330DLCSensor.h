@@ -179,7 +179,7 @@ class ISM330DLCSensor
     ISM330DLCStatusTypeDef Get_6D_Orientation_YH        (uint8_t *yh);
     ISM330DLCStatusTypeDef Get_6D_Orientation_ZL        (uint8_t *zl);
     ISM330DLCStatusTypeDef Get_6D_Orientation_ZH        (uint8_t *zh);
-	ISM330DLCStatusTypeDef Get_Event_Status             (ISM330DLC_Event_Status_t *status);
+	  ISM330DLCStatusTypeDef Get_Event_Status             (ISM330DLC_Event_Status_t *status);
     ISM330DLCStatusTypeDef ReadReg                      (uint8_t reg, uint8_t *data);
     ISM330DLCStatusTypeDef WriteReg                     (uint8_t reg, uint8_t data);
 	
