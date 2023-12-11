@@ -15,6 +15,7 @@ extern "C" {
 #include "../../BSP/SPIClass.h"
 #include <cstdio>
 #include <cmath>
+#include "../../BSP/ISM330DLC_ACC_GYRO_Driver.h"
 
 /************ external objet and external for C++ execution in C*/
 extern SPI_HandleTypeDef hspi4;
@@ -36,6 +37,7 @@ static void Runge_Kutta_Integration(int32_t *acceleration, float initialVelocity
 
 //Euler integration with 1 order
 static void integrate(int32_t *acceleration, float initialVelocity, float timeStep, float *integral);
+void Ism330dlc_calibration (float r_Input[], float r_Offset[] );
 /****************************************************************/
 
 int32_t accelerometer[3];
@@ -45,6 +47,8 @@ float Speed2AfterIntegration[3];
 float velocity2;
 float  AngleAfterIntegration[3];
 float  tauxRotation;
+float r_Offset[3];
+float r_Input[3];
 
 /*****objects ******/
 SPIClass dev_interface(hspi4);
@@ -116,7 +120,15 @@ void Ims330dlc_InitObjet(void)
     AccGyr.Get_X_FS(&fullScale);
 
 	/* Set high performance mode */
-	//AccGyr.WriteReg();
+	AccGyr.WriteReg((uint8_t)ISM330DLC_ACC_GYRO_CTRL6_G,
+					(uint8_t)ISM330DLC_ACC_GYRO_XL_HM_MODE_ENABLED);
+
+	/* Read performance*/
+	//TODO verify the performance is ok
+	uint8_t performance;
+	AccGyr.ReadReg((uint8_t)ISM330DLC_ACC_GYRO_CTRL6_G, &performance);
+
+
 
 	/* digital filter configuration */
 	
@@ -171,6 +183,14 @@ void Ism330dlc_CallBackFunction(void)
 	AccGyr.Get_X_Axes(accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
 	
+	/*Calibration*/
+	for(uint8_t index=0; index<3; index++)
+	{
+		r_Input[index]=accelerometer[index];
+	}
+	/* calculate offset */
+	Ism330dlc_calibration (r_Input,r_Offset);
+
 	/**speed integration */
 	if(accelerometer)
 	{
@@ -209,9 +229,16 @@ void Ism330dlc_kalmanFilter(void)
 	/* Implement kalman filter here*/
 }
 
-void Ism330dlc_calibration ()
+void Ism330dlc_calibration (float r_Input[], float r_Offset[] )
 {
+    // Calculate calibration values
+    float accdeltaXcal = -r_Input[0];
+    float accdeltaYcal = -r_Input[1];
+    float accdeltaZcal = 1000 - r_Input[2];
 
+    r_Offset[0] = r_Input[0] + accdeltaXcal;
+    r_Offset[1] = r_Input[1] + accdeltaYcal;
+    r_Offset[2] = r_Input[2] + accdeltaZcal;
 }
 
 void Ism330dlc_autoTest()
