@@ -56,7 +56,9 @@ float AccfilteredValue[3];
 SPIClass dev_interface(hspi4);
 ISM330DLCSensor AccGyr(&dev_interface, SPI4_CS_Pin, 1400000);
 // Initialize the low-pass filter with a cutoff frequency of 10 Hz and a time step of 0.01 seconds
-LowPassFilter myFilter;
+LowPassFilter myFilter0;
+LowPassFilter myFilter1;
+LowPassFilter myFilter2;
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -135,7 +137,9 @@ void Ims330dlc_InitObjet(void)
 
 
 	/* digital filter configuration */
-	initLowPassFilter(&myFilter, 100.0, 0.01);
+	initLowPassFilter(&myFilter0, 100.0, 0.01);
+	initLowPassFilter(&myFilter1, 100.0, 0.01);
+	initLowPassFilter(&myFilter2, 100.0, 0.01);
 	
 
 }
@@ -189,9 +193,9 @@ void Ism330dlc_CallBackFunction(void)
 	AccGyr.Get_G_Axes(gyroscope);
 	
 	/* filter acceleration data befor use */
-	AccfilteredValue[0]  = updateLowPassFilter(&myFilter, Accelerometer[0] );
-	AccfilteredValue[1]  = updateLowPassFilter(&myFilter, Accelerometer[1] );
-	AccfilteredValue[2]  = updateLowPassFilter(&myFilter, Accelerometer[2] );
+	AccfilteredValue[0]  = updateLowPassFilter(&myFilter0, Accelerometer[0] );
+	AccfilteredValue[1]  = updateLowPassFilter(&myFilter1, Accelerometer[1] );
+	AccfilteredValue[2]  = updateLowPassFilter(&myFilter2, Accelerometer[2] );
 
 	/*Calibration*/
 	for(uint8_t index=0; index<3; index++)

@@ -12,6 +12,13 @@
 extern "C" {
 #endif
 
+typedef struct
+{
+    float cutoffFrequency;  // Cutoff frequency in Hz
+    float dt;               // Time step in seconds
+    float alpha;            // Filter coefficient
+    float currentValue;     // Current filtered value
+} LowPassFilter;
 
 void Ims330dlc_InitObjet(void);
 void Ism330dlc_kalmanFilter (void);
@@ -19,10 +26,7 @@ void initLowPassFilter(LowPassFilter* filter, float cutoffFrequency, float dt);
 float updateLowPassFilter(LowPassFilter* filter, float inputValue);
 
 typedef void (*functionPointer)(void);
-void Ism330dlc_CallBackFunction(void);
-functionPointer GyroAccelCalctable[1] = {Ism330dlc_CallBackFunction, 
-                                            Ism330dlc_kalmanFilter
-                                        };
+
 
 typedef enum
 {
@@ -33,13 +37,6 @@ typedef enum
     SLEEP_MODE
 }Ism330dlc_mode;
 
-typedef struct
-{
-    float cutoffFrequency;  // Cutoff frequency in Hz
-    float dt;               // Time step in seconds
-    float alpha;            // Filter coefficient
-    float currentValue;     // Current filtered value
-} LowPassFilter;
 
 
 #ifdef __cplusplus

@@ -60,7 +60,10 @@ HCD_HandleTypeDef hhcd_USB_OTG_HS;
 SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
-
+void Ism330dlc_CallBackFunction(void);
+functionPointer GyroAccelCalctable[2] = {Ism330dlc_CallBackFunction,
+                                            Ism330dlc_kalmanFilter
+                                        };
 int16_t perfome10msOperations (functionPointer *GyroAccelCalc);
 /* USER CODE END PV */
 
