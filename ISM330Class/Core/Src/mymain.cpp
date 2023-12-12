@@ -135,12 +135,30 @@ void Ims330dlc_InitObjet(void)
 	AccGyr.ReadReg((uint8_t)ISM330DLC_ACC_GYRO_CTRL6_G, &performance);
 
 
-
 	/* digital filter configuration */
+	//100Hz Filter BW
+	//10ms  interrupt period
 	initLowPassFilter(&myFilter0, 100.0, 0.01);
 	initLowPassFilter(&myFilter1, 100.0, 0.01);
 	initLowPassFilter(&myFilter2, 100.0, 0.01);
+
 	
+	//Accelerometer settings
+	//ODR = 12
+	//FS  = 2g
+	//High performance is activated ==> analog filter activated
+	//ODR<1666 => BW=400Hz
+	//Digital low pass filter configuration	
+		// 1/ LPF1_BW_SEL =1 bit in the CTRL1_XL => ODR/4
+		// 2/ NPUT_COMPOSITE bit in the CTRL8_XL
+		// 3/ High performance mode => BW = ODR/4 => BW = 12/4 = 3Hz
+		// 4/ to use the second LPF2 
+			// 1/ LPF2_XL_EN
+			// 2/ onfiguring the HPCF_XL[1:0] field of the CTRL8_XL 
+	
+	/** Intern filter configuration  LPF1 **/
+	AccGyr.Low_Pass_filter_configuration();
+
 
 }
 /**
@@ -272,8 +290,6 @@ void Ism330dlc_autoTest()
 {
 
 }
-
-
 
 
 // Function to initialize the low-pass filter

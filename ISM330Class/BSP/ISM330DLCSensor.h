@@ -182,6 +182,7 @@ class ISM330DLCSensor
 	  ISM330DLCStatusTypeDef Get_Event_Status             (ISM330DLC_Event_Status_t *status);
     ISM330DLCStatusTypeDef ReadReg                      (uint8_t reg, uint8_t *data);
     ISM330DLCStatusTypeDef WriteReg                     (uint8_t reg, uint8_t data);
+    ISM330DLCStatusTypeDef Low_Pass_filter_configuration();
 	
 	/**
      * @brief Utility function to read data.
