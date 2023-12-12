@@ -192,7 +192,7 @@ void Ism330dlc_CallBackFunction(void)
 	AccGyr.Get_X_Axes(Accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
 	
-	/* filter acceleration data befor use */
+	/* filter acceleration data before use */
 	AccfilteredValue[0]  = updateLowPassFilter(&myFilter0, Accelerometer[0] );
 	AccfilteredValue[1]  = updateLowPassFilter(&myFilter1, Accelerometer[1] );
 	AccfilteredValue[2]  = updateLowPassFilter(&myFilter2, Accelerometer[2] );
@@ -210,10 +210,10 @@ void Ism330dlc_CallBackFunction(void)
 	if(Accelerometer)
 	{
 		/*  Integration methods */
-		Runge_Kutta_Integration(Accelerometer, 0, INTEGRATION, Speed1AfterIntegration);
+		Runge_Kutta_Integration(AccfilteredValue, 0, INTEGRATION, Speed1AfterIntegration);
 
 		/** Normal integration for comparision */
-		integrate(Accelerometer, 0, INTEGRATION, Speed2AfterIntegration);
+		integrate(AccfilteredValue, 0, INTEGRATION, Speed2AfterIntegration);
 	}
 
 	/* Convert mm/s to m/s */
@@ -238,12 +238,20 @@ void Ism330dlc_CallBackFunction(void)
 	/* real time calculation */
 	HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void Ism330dlc_kalmanFilter(void)
 {
 	/* Implement kalman filter here*/
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void Ism330dlc_calibration (float r_Input[], float r_Offset[] )
 {
     // Calculate calibration values
@@ -255,7 +263,11 @@ void Ism330dlc_calibration (float r_Input[], float r_Offset[] )
     r_Offset[1] = r_Input[1] + accdeltaYcal;
     r_Offset[2] = r_Input[2] + accdeltaZcal;
 }
-
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
 void Ism330dlc_autoTest()
 {
 
