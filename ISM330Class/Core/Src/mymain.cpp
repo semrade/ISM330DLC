@@ -155,7 +155,7 @@ void Ims330dlc_InitObjet(void)
 		// 3/ High performance mode => BW = ODR/4 => BW = 12/4 = 3Hz
 		// 4/ to use the second LPF2 
 			// 1/ LPF2_XL_EN
-			// 2/ onfiguring the HPCF_XL[1:0] field of the CTRL8_XL 
+			// 2/ configuring the HPCF_XL[1:0] field of the CTRL8_XL 
 	
 	/** Intern filter configuration  LPF1 **/
 	AccGyr.Low_Pass_filter_configuration();
