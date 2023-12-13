@@ -51,7 +51,7 @@ float  tauxRotation;
 float r_Offset[3];
 float r_Input[3];
 float AccfilteredValue[3];
-int32_t AccOffset[3];
+int32_t AccOffset[3]={0};
 
 /*****objects ******/
 SPIClass dev_interface(hspi4);
@@ -173,9 +173,9 @@ void Ims330dlc_InitObjet(void)
 	AccGyr.Get_G_Axes(gyroscope);
 
 	/* classical calibration method */
-	AccOffset[0] = 0;
-	AccOffset[1] = 0;
-	AccOffset[2] = 0;
+	AccOffset[0] = (994-993)/2;
+	AccOffset[1] = (1009-997)/2;
+	AccOffset[2] = (1035-965)/2;
 
 	/* advanced calibration method based on the DT0053*/
 
@@ -229,6 +229,10 @@ void Ism330dlc_CallBackFunction(void)
 	AccGyr.Get_X_Axes(Accelerometer);
 	AccGyr.Get_G_Axes(gyroscope);
 	
+	Accelerometer[0]-= AccOffset[0];
+	Accelerometer[1]-= AccOffset[1];
+	Accelerometer[2]-= AccOffset[2];
+
 	/* filter acceleration data before use */
 	AccfilteredValue[0]  = updateLowPassFilter(&myFilter0, Accelerometer[0] );
 	AccfilteredValue[1]  = updateLowPassFilter(&myFilter1, Accelerometer[1] );
