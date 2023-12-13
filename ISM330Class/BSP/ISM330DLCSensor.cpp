@@ -2092,7 +2092,7 @@ ISM330DLCStatusTypeDef ISM330DLCSensor::Low_Pass_filter_configuration()
 {
   if (ISM330DLC_ACC_GYRO_W_BW_SEL((void *)this, ISM330DLC_ACC_GYRO_BW_SEL_ODR4) == MEMS_ERROR)
   {
-    return ISM330DLC_STATUS_ERROR
+    return ISM330DLC_STATUS_ERROR;
   }
   return ISM330DLC_STATUS_OK;
 }

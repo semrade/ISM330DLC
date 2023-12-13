@@ -51,6 +51,7 @@ float  tauxRotation;
 float r_Offset[3];
 float r_Input[3];
 float AccfilteredValue[3];
+int32_t AccOffset[3];
 
 /*****objects ******/
 SPIClass dev_interface(hspi4);
@@ -159,6 +160,24 @@ void Ims330dlc_InitObjet(void)
 	/** Intern filter configuration  LPF1 **/
 	AccGyr.Low_Pass_filter_configuration();
 
+	/* static calibration */
+
+	uint8_t Index;
+	for(Index = 0; Index<3; Index++)
+	{
+		Accelerometer[Index] = 0;
+		gyroscope [Index] = 0;
+	}
+	/* get x and g*/
+	AccGyr.Get_X_Axes(Accelerometer);
+	AccGyr.Get_G_Axes(gyroscope);
+
+	/* classical calibration method */
+	AccOffset[0] = 0;
+	AccOffset[1] = 0;
+	AccOffset[2] = 0;
+
+	/* advanced calibration method based on the DT0053*/
 
 }
 /**
@@ -228,10 +247,10 @@ void Ism330dlc_CallBackFunction(void)
 	if(Accelerometer)
 	{
 		/*  Integration methods */
-		Runge_Kutta_Integration(AccfilteredValue, 0, INTEGRATION, Speed1AfterIntegration);
+		//Runge_Kutta_Integration(AccfilteredValue, 0, INTEGRATION, Speed1AfterIntegration);
 
 		/** Normal integration for comparision */
-		integrate(AccfilteredValue, 0, INTEGRATION, Speed2AfterIntegration);
+		//integrate(AccfilteredValue, 0, INTEGRATION, Speed2AfterIntegration);
 	}
 
 	/* Convert mm/s to m/s */
